@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AntoMatic — Proyecto 3: Justificación y Metodología</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+    background: #fff;
+    color: #000;
+    padding: 20px;
+  }
+
+  /* ===== HEADER ===== */
+  header {
+    border: 2px solid #000;
+    padding: 12px 16px;
+    margin-bottom: 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  .brand { font-size: 10px; font-weight: bold; letter-spacing: .1em; text-transform: uppercase; color: #555; }
+  header h1 { font-size: 14px; font-weight: bold; margin: 3px 0 2px; }
+  header p  { font-size: 11px; color: #555; }
+  .header-badge {
+    background: #000; color: #fff; font-size: 10px;
+    font-weight: bold; padding: 4px 10px; letter-spacing: .08em;
+    white-space: nowrap; align-self: center;
+  }
+
+  /* ===== VALIDATION BAR ===== */
+  #validBar {
+    display: none;
+    padding: 7px 12px;
+    font-size: 11px;
+    margin-bottom: 14px;
+    border-left: 4px solid #e6a817;
+    background: #fff8e1;
+    color: #7a4f00;
+    border: 1px solid #e6a817;
+    border-left-width: 4px;
+  }
+  #validBar.ok {
+    background: #eaffea; border-color: #2a7a2a;
+    border-left-color: #2a7a2a; color: #1a5c1a;
+  }
+
+  /* ===== TABS ===== */
+  .tabs {
+    display: flex;
+    border-bottom: 2px solid #000;
+    margin-bottom: 18px;
+    gap: 2px;
+  }
+
+  .tab-btn {
+    padding: 7px 16px;
+    border: 1px solid #ccc;
+    border-bottom: none;
+    background: #f4f4f4;
+    cursor: pointer;
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    font-weight: bold;
+    letter-spacing: .04em;
+    transition: background .15s;
+  }
+
+  .tab-btn:hover { background: #e0e0e0; }
+  .tab-btn.active { background: #000; color: #fff; border-color: #000; }
+
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* ===== INPUT SECTION ===== */
+  .input-section {
+    border: 1px solid #000;
+    padding: 14px 16px;
+    margin-bottom: 16px;
+  }
+
+  .input-section h2 {
+    font-size: 11px; font-weight: bold; text-transform: uppercase;
+    letter-spacing: .08em; border-bottom: 1px solid #ccc;
+    padding-bottom: 6px; margin-bottom: 12px;
+  }
+
+  .input-grid {
+    display: grid;
+    grid-template-columns: 250px 1fr;
+    gap: 7px 12px;
+    align-items: center;
+  }
+
+  .input-grid label { font-size: 12px; }
+
+  .input-grid input[type="text"],
+  .input-grid input[type="number"],
+  .input-grid select {
+    background: #cfe2f3;
+    border: 1px solid #999;
+    padding: 5px 7px;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    width: 100%;
+    color: #000;
+    transition: background .15s, border-color .15s;
+  }
+
+  .input-grid input:focus,
+  .input-grid select:focus { outline: 2px solid #3c78d8; background: #daeeff; }
+  .input-grid input.invalid { background: #ffe0e0; border-color: #c00; }
+
+  .hint {
+    font-size: 10px; color: #666;
+    grid-column: 2; margin-top: -4px;
+  }
+
+  .input-divider {
+    grid-column: 1 / -1;
+    border: none; border-top: 1px dashed #bbb; margin: 4px 0;
+  }
+
+  .section-label {
+    grid-column: 1 / -1;
+    font-size: 10px; font-weight: bold; text-transform: uppercase;
+    letter-spacing: .1em; color: #fff; background: #555;
+    padding: 3px 8px; margin: 6px 0 2px;
+  }
+
+  .btn-primary {
+    margin-top: 14px;
+    padding: 9px 28px;
+    background: #000; color: #fff;
+    border: none; cursor: pointer;
+    font-family: Arial, sans-serif;
+    font-size: 13px; font-weight: bold;
+    letter-spacing: .04em;
+    display: block; width: 100%;
+    transition: background .15s;
+  }
+  .btn-primary:hover { background: #333; }
+
+  /* ===== OUTPUT BLOCKS ===== */
+  .out-block {
+    border: 1px solid #000;
+    margin-bottom: 14px;
+  }
+
+  .out-head {
+    background: #000; color: #fff;
+    padding: 6px 12px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 11px; font-weight: bold; text-transform: uppercase; letter-spacing: .07em;
+  }
+
+  .out-badge {
+    font-size: 9px; font-weight: bold; letter-spacing: .07em;
+    padding: 2px 7px; border: 1px solid currentColor;
+  }
+
+  .badge-sampieri { color: #adf; }
+  .badge-met      { color: #afc; }
+  .badge-pob      { color: #fca; }
+
+  .btn-copy-block {
+    background: #fff; color: #000; border: none;
+    padding: 3px 10px; cursor: pointer;
+    font-family: Arial, sans-serif; font-size: 10px; font-weight: bold;
+    transition: background .1s;
+  }
+  .btn-copy-block:hover  { background: #ddd; }
+  .btn-copy-block.done   { background: #2a7a2a; color: #fff; }
+
+  .out-body { padding: 10px 12px; }
+
+  .out-instruction {
+    font-size: 11px; background: #f0f0f0;
+    border-left: 3px solid #000; padding: 5px 8px;
+    margin-bottom: 10px; line-height: 1.5;
+  }
+
+  .out-textarea {
+    width: 100%; min-height: 110px;
+    font-family: Arial, sans-serif; font-size: 12px;
+    border: 1px solid #ccc; padding: 8px 10px;
+    background: #fafafa; resize: vertical;
+    line-height: 1.7; color: #111;
+  }
+
+  .criterio-block {
+    margin-bottom: 10px;
+    border: 1px solid #e0e0e0;
+  }
+
+  .criterio-head {
+    background: #f0f0f0;
+    padding: 4px 10px;
+    font-size: 11px; font-weight: bold;
+    display: flex; justify-content: space-between; align-items: center;
+    border-bottom: 1px solid #ddd;
+  }
+
+  .criterio-num {
+    background: #000; color: #fff;
+    font-size: 10px; font-weight: bold;
+    padding: 1px 6px; margin-right: 6px;
+  }
+
+  .criterio-body {
+    padding: 8px 10px;
+    font-size: 12px; line-height: 1.75;
+    color: #111; background: #fff;
+  }
+
+  footer {
+    border-top: 1px solid #ddd; margin-top: 24px;
+    padding-top: 10px; font-size: 10px; color: #aaa; text-align: center;
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div>
+    <div class="brand">AntoMatic Tools · UNASAM</div>
+    <h1>Proyecto 3 — Justificación y Metodología</h1>
+    <p>Justificación (5 criterios) · Enfoque · Tipo · Diseño · Población · Muestra · Muestreo</p>
+  </div>
+  <div class="header-badge">v2.0</div>
+</header>
+
+<!-- VALIDATION BAR -->
+<div id="validBar">Completa los campos obligatorios marcados en rojo.</div>
+
+<!-- TABS -->
+<div class="tabs">
+  <button class="tab-btn active" data-tab="input">Datos de entrada</button>
+  <button class="tab-btn" data-tab="justificacion">Justificación</button>
+  <button class="tab-btn" data-tab="metodologia">Metodología</button>
+</div>
+
+<!-- ============================= TAB: INPUT ============================= -->
+<div id="input" class="tab-content active">
+
+  <div class="input-section">
+    <h2>Variables y organización</h2>
+    <div class="input-grid">
+
+      <div class="section-label">Variables</div>
+
+      <label>Variable independiente (X):</label>
+      <input type="text" id="varX" placeholder="la resiliencia" oninput="validar()">
+      <span></span><span class="hint">Ej: <i>la motivación intrínseca</i></span>
+
+      <label>Variable dependiente (Y):</label>
+      <input type="text" id="varY" placeholder="el compromiso organizacional" oninput="validar()">
+      <span></span><span class="hint">Ej: <i>el desempeño laboral</i></span>
+
+      <hr class="input-divider"><hr class="input-divider">
+      <div class="section-label">Contexto institucional</div>
+
+      <label>Organización:</label>
+      <input type="text" id="organizacion" placeholder="la Municipalidad Provincial de Huaraz" oninput="validar()">
+
+      <label>Sector / área:</label>
+      <input type="text" id="sector" placeholder="la administración de los gobiernos provinciales" oninput="validar()">
+
+      <label>Ciudad / área geográfica:</label>
+      <input type="text" id="ciudad" placeholder="la ciudad de Huaraz" oninput="validar()">
+
+      <hr class="input-divider"><hr class="input-divider">
+      <div class="section-label">Unidad de análisis</div>
+
+      <label>Personas encuestadas (plural):</label>
+      <input type="text" id="personas" placeholder="los trabajadores" oninput="validar()">
+
+      <label>Personas encuestadas (singular):</label>
+      <input type="text" id="trabajadorSing" placeholder="el trabajador" oninput="validar()">
+
+      <label>Condición para ser encuestado:</label>
+      <input type="text" id="condicion" placeholder="tener una relación contractual vigente con la organización" oninput="validar()">
+
+      <label>Edad mínima:</label>
+      <input type="number" id="edadMin" value="18" oninput="validar()">
+
+      <label>Edad máxima:</label>
+      <input type="number" id="edadMax" value="60" oninput="validar()">
+
+      <label>Tamaño de la población (N):</label>
+      <input type="number" id="poblacion" value="70" oninput="validar()">
+
+      <hr class="input-divider"><hr class="input-divider">
+      <div class="section-label">Actores del problema</div>
+
+      <label>Decisores principales:</label>
+      <input type="text" id="decisores" placeholder="las autoridades de la municipalidad provincial" oninput="validar()">
+
+      <label>Persona clave del problema:</label>
+      <input type="text" id="personaClave" placeholder="el jefe del área de Recursos Humanos" oninput="validar()">
+
+      <label>Beneficiarios directos:</label>
+      <input type="text" id="beneficiarios" placeholder="los trabajadores y la ciudadanía de Huaraz" oninput="validar()">
+
+      <hr class="input-divider"><hr class="input-divider">
+      <div class="section-label">Diseño metodológico</div>
+
+      <label>Alcance / tipo de investigación:</label>
+      <select id="tipoInv" onchange="validar()">
+        <option value="correlacional">Correlacional</option>
+        <option value="explicativo">Explicativo / Causal</option>
+        <option value="descriptivo">Descriptivo</option>
+        <option value="descriptivo-correlacional">Descriptivo-correlacional</option>
+      </select>
+
+      <label>Nivel académico:</label>
+      <select id="nivel" onchange="validar()">
+        <option value="pregrado">Pregrado</option>
+        <option value="posgrado">Posgrado (Maestría)</option>
+      </select>
+
+      <label>Instrumento de recolección:</label>
+      <select id="instrumento" onchange="validar()">
+        <option value="cuestionario">Cuestionario (encuesta)</option>
+        <option value="entrevista">Guía de entrevista</option>
+        <option value="ficha de observación">Ficha de observación</option>
+      </select>
+
+      <label>Tipo de muestreo:</label>
+      <select id="tipoMuestreo" onchange="validar()">
+        <option value="probabilístico aleatorio simple">Probabilístico — aleatorio simple</option>
+        <option value="probabilístico estratificado">Probabilístico — estratificado</option>
+        <option value="no probabilístico por conveniencia">No probabilístico — por conveniencia</option>
+        <option value="no probabilístico censal">No probabilístico — censal (toda la población)</option>
+      </select>
+
+    </div><!-- /input-grid -->
+
+    <button class="btn-primary" onclick="procesarTodo()">⚙ Generar textos</button>
+  </div>
+
+</div><!-- /tab input -->
+
+<!-- ============================= TAB: JUSTIFICACIÓN ============================= -->
+<div id="justificacion" class="tab-content">
+  <div id="bloqueJustificacion"></div>
+</div>
+
+<!-- ============================= TAB: METODOLOGÍA ============================= -->
+<div id="metodologia" class="tab-content">
+  <div id="bloqueMetodologia"></div>
+</div>
+
+<footer>AntoMatic Tools v2.0 · UNASAM EPG &amp; E.P. Administración · Tomar con precaución · Basado en Hernández-Sampieri et al.</footer>
+
+<script>
+  // ——— TABS ———
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById(btn.dataset.tab).classList.add('active');
+    });
+  });
+
+  // ——— VALIDACIÓN ———
+  const obligatorios = ['varX','varY','organizacion','sector','ciudad','personas','trabajadorSing','condicion','beneficiarios'];
+
+  function validar(){
+    const bar = document.getElementById('validBar');
+    let vacios = 0;
+    obligatorios.forEach(id => {
+      const el = document.getElementById(id);
+      const empty = !el || el.value.trim() === '';
+      if(el) el.classList.toggle('invalid', empty);
+      if(empty) vacios++;
+    });
+    bar.style.display = 'block';
+    if(vacios > 0){
+      bar.className = '';
+      bar.textContent = `⚠ Faltan ${vacios} campo(s) obligatorio(s) marcados en rojo.`;
+    } else {
+      bar.className = 'ok';
+      bar.textContent = '✓ Todos los campos completados. Listo para generar.';
+    }
+  }
+
+  // ——— HELPERS ———
+  function g(id){ return document.getElementById(id).value.trim(); }
+
+  function makeBlock(titulo, badge, badgeClass, items){
+    let html = `<div class="out-block">
+      <div class="out-head">
+        <span>${titulo}</span>
+        <span class="out-badge ${badgeClass}">${badge}</span>
+      </div>
+      <div class="out-body">`;
+
+    items.forEach((item, i) => {
+      html += `
+        <div class="criterio-block">
+          <div class="criterio-head">
+            <span><span class="criterio-num">${item.num}</span>${item.titulo}</span>
+            <button class="btn-copy-block" onclick="copiarCriterio(this,'criterio_${titulo.replace(/\s/g,'_')}_${i}')">Copiar</button>
+          </div>
+          <div class="criterio-body" id="criterio_${titulo.replace(/\s/g,'_')}_${i}">${item.texto}</div>
+        </div>`;
+    });
+
+    html += `</div></div>`;
+    return html;
+  }
+
+  function copiarCriterio(btn, id){
+    const el = document.getElementById(id);
+    const txt = el ? el.innerText : '';
+    navigator.clipboard.writeText(txt).then(() => {
+      btn.textContent = '✓ Copiado';
+      btn.classList.add('done');
+      setTimeout(() => { btn.textContent = 'Copiar'; btn.classList.remove('done'); }, 1600);
+    });
+  }
+
+  // ——— PROCESO PRINCIPAL ———
+  function procesarTodo(){
+    // Leer valores
+    const varX         = g('varX')         || 'la variable independiente';
+    const varY         = g('varY')         || 'la variable dependiente';
+    const org          = g('organizacion') || 'la organización';
+    const sector       = g('sector')       || 'el sector de interés';
+    const ciudad       = g('ciudad')       || 'la ciudad';
+    const personas     = g('personas')     || 'los trabajadores';
+    const trabSing     = g('trabajadorSing')|| 'el trabajador';
+    const condicion    = g('condicion')    || 'tener relación contractual vigente';
+    const edadMin      = g('edadMin')      || '18';
+    const edadMax      = g('edadMax')      || '60';
+    const poblacion    = g('poblacion')    || '0';
+    const decisores    = g('decisores')    || 'las autoridades de la organización';
+    const personaClave = g('personaClave') || 'el responsable del área';
+    const benefic      = g('beneficiarios')|| 'los trabajadores y la comunidad';
+    const tipoInv      = g('tipoInv')      || 'correlacional';
+    const nivel        = g('nivel')        || 'pregrado';
+    const instrumento  = g('instrumento')  || 'cuestionario';
+    const tipoMuestreo = g('tipoMuestreo') || 'probabilístico aleatorio simple';
+
+    const N = parseInt(poblacion) || 0;
+    const esPosgrado = nivel === 'posgrado';
+    const esCensal   = tipoMuestreo.includes('censal');
+
+    // ======================================================
+    //  JUSTIFICACIÓN — 5 CRITERIOS (Hernández-Sampieri)
+    // ======================================================
+
+    const j1 = `La presente investigación se justifica por su conveniencia, dado que es pertinente y necesaria para ${org}. 
+El estudio permitirá conocer el estado actual de ${varX} y su relación con ${varY} entre ${personas} de ${org}, 
+información que podrá ser utilizada por ${decisores} para la toma de decisiones basada en evidencia. 
+Asimismo, los resultados obtenidos servirán de referencia para otros estudios realizados en contextos similares dentro de ${sector}.`;
+
+    const j2 = `Esta investigación posee relevancia social porque los resultados beneficiarán directamente a ${benefic}. 
+Al comprender de qué manera ${varX} incide sobre ${varY}, ${personaClave} contará con información objetiva 
+para proponer acciones de mejora orientadas al bienestar de ${personas}. 
+En un contexto más amplio, los hallazgos contribuirán al fortalecimiento institucional de ${org} y, 
+por extensión, a la calidad del servicio que esta presta a la sociedad en ${ciudad}.`;
+
+    const j3 = `Desde el punto de vista teórico, la investigación busca llenar el vacío de conocimiento sobre ${varY} 
+evidenciado en el contexto de ${org}. Los resultados permitirán revisar, desarrollar y contrastar la teoría 
+existente en torno a ${varX} y ${varY}, generando conocimiento aplicable a ${sector}. 
+De este modo, el estudio aportará nuevas evidencias empíricas que enriquecerán el corpus teórico disponible, 
+contribuyendo a reflexionar sobre el impacto de ${varX} en ${varY} e identificando posibles líneas de investigación futura.`;
+
+    const j4 = `En cuanto a sus implicaciones prácticas, esta investigación ayudará a resolver el problema observado 
+en torno a ${varY} en ${org}. A partir de los resultados, ${decisores} podrán diseñar e implementar 
+estrategias concretas para mejorar ${varY} a través de intervenciones orientadas a ${varX}. 
+Esto tendrá un impacto directo en el desempeño y bienestar de ${personas}, contribuyendo al logro de los 
+objetivos institucionales de ${org} en ${ciudad}.`;
+
+    const j5_extra = esPosgrado
+      ? `Asimismo, el uso de modelos de ecuaciones estructurales (PLS-SEM) para contrastar las hipótesis 
+aportará una estrategia analítica de mayor robustez que los métodos correlacionales tradicionales, 
+constituyendo un referente metodológico para investigaciones similares en ${sector}.`
+      : `Asimismo, el cuestionario validado mediante juicio de expertos y análisis de confiabilidad (Alfa de Cronbach) 
+podrá ser adaptado y reutilizado en futuras investigaciones sobre ${varX} y ${varY} en contextos similares.`;
+
+    const j5 = `Finalmente, la investigación tiene utilidad metodológica porque contribuirá al desarrollo de instrumentos 
+de medición válidos y confiables para evaluar ${varX} y ${varY} en el contexto de ${sector}. 
+El ${instrumento} diseñado será sometido a validación por juicio de expertos y pruebas de confiabilidad, 
+lo que garantizará su rigurosidad científica y su potencial reutilización en estudios posteriores. 
+${j5_extra}`;
+
+    // ======================================================
+    //  METODOLOGÍA
+    // ======================================================
+
+    // — Enfoque —
+    const met1 = `La investigación adopta un enfoque cuantitativo, dado que se medirán las variables ${varX} y ${varY} 
+mediante instrumentos estructurados que producen datos numéricos, los cuales serán procesados 
+mediante técnicas estadísticas para contrastar las hipótesis planteadas (Hernández-Sampieri et al., 2014). 
+Este enfoque permite obtener resultados objetivos, replicables y generalizables al contexto de ${sector}.`;
+
+    // — Tipo —
+    const tipoTextos = {
+      'correlacional':
+        `El tipo de investigación es correlacional, ya que tiene como propósito conocer la relación o grado de asociación 
+existente entre ${varX} y ${varY} en ${personas} de ${org}. 
+No se busca establecer causalidad, sino determinar si existe una relación significativa entre ambas variables 
+y en qué medida se asocian dentro del contexto de ${sector}.`,
+
+      'explicativo':
+        `El tipo de investigación es explicativo o causal, dado que busca determinar en qué medida ${varX} 
+influye o explica los cambios observados en ${varY} en ${personas} de ${org}. 
+Este nivel va más allá de la descripción o correlación, pues pretende establecer relaciones de causa-efecto 
+fundamentadas en un modelo teórico aplicado al contexto de ${sector}.`,
+
+      'descriptivo':
+        `El tipo de investigación es descriptivo, pues busca especificar las propiedades, características 
+y perfiles de ${personas} de ${org} en relación con ${varX} y ${varY}. 
+El estudio medirá y describirá el comportamiento de cada variable de forma independiente, 
+aportando un diagnóstico situacional en el contexto de ${sector}.`,
+
+      'descriptivo-correlacional':
+        `El tipo de investigación es descriptivo-correlacional: en una primera fase se describe el comportamiento 
+de ${varX} y ${varY} de manera independiente; en una segunda fase se determina el grado de relación 
+existente entre ambas variables en ${personas} de ${org}. 
+Este diseño permite obtener tanto un diagnóstico situacional como evidencia de asociación entre las variables 
+en el contexto de ${sector}.`
+    };
+
+    const met2 = tipoTextos[tipoInv] || tipoTextos['correlacional'];
+
+    // — Diseño —
+    const met3 = `El diseño de la investigación es no experimental de corte transversal, dado que las variables 
+${varX} y ${varY} serán observadas en su estado natural, sin manipulación deliberada de ninguna de ellas. 
+La recolección de datos se realizará en un único momento del tiempo, tomando como referencia a ${personas} 
+de ${org} en ${ciudad}, lo que corresponde a un diseño transeccional según Hernández-Sampieri et al. (2014).`;
+
+    // — Población y unidad de análisis —
+    const met4 = `La población objeto de estudio estará conformada por ${personas} de ${org}, ubicados en ${ciudad}, 
+pertenecientes a ${sector}. La unidad de análisis, entendida como el elemento del que se obtendrá la información 
+primaria para la investigación, estará representada por ${trabSing} adscrito a ${org}, cuyo rango de edad 
+oscila entre los ${edadMin} y ${edadMax} años. Se estima una población de aproximadamente ${poblacion} sujetos 
+que cumplan con la condición de ${condicion}.`;
+
+    // — Muestra —
+    let met5 = '';
+    if(esCensal){
+      met5 = `Dado que la población es reducida (N = ${poblacion}), se aplicará un muestreo censal, es decir, 
+se trabajará con la totalidad de ${personas} de ${org} que cumplan con la condición de ${condicion}, 
+lo cual garantiza mayor representatividad y elimina el error de muestreo (Ramírez, 1997).`;
+    } else if(N > 0 && N <= 30){
+      met5 = `Considerando que la población es pequeña (N = ${poblacion}), se tomará como muestra 
+a la totalidad de ${personas} de ${org} que cumplan con la condición de ${condicion} 
+(muestra censal), garantizando así la representatividad total de la investigación.`;
+    } else {
+      const n = calcularMuestra(N);
+      const textoN = N > 0 ? `(N = ${poblacion})` : '';
+      const textoMuestra = n > 0 ? ` Aplicando la fórmula para poblaciones finitas con un nivel de confianza del 95% (Z = 1.96), 
+un margen de error del 5% (e = 0.05) y una proporción esperada de p = 0.5, 
+se obtiene una muestra aproximada de <strong>n = ${n} ${personas.replace('los ','').replace('las ','')}</strong>.` : '';
+      met5 = `La determinación del tamaño de la muestra se realizará utilizando la fórmula estadística 
+para poblaciones finitas ${textoN}, considerando un nivel de confianza del 95%, 
+un error máximo admisible del 5% y una varianza máxima (p = q = 0.5).${textoMuestra}
+${esPosgrado ? 'Para estudios con modelos de ecuaciones estructurales (PLS-SEM) se aplicará adicionalmente el criterio de 10 veces el número de flechas entrantes al constructo con más indicadores (regla de los 10).' : ''}`;
+    }
+
+    // — Muestreo —
+    const muestreoTextos = {
+      'probabilístico aleatorio simple':
+        `La técnica de muestreo será el muestreo probabilístico aleatorio simple, 
+de modo que cada ${trabSing} de ${org} que cumpla con la condición de ${condicion} 
+tendrá la misma probabilidad de ser seleccionado para formar parte de la muestra. 
+Este tipo de muestreo garantiza la representatividad estadística de los resultados obtenidos.`,
+
+      'probabilístico estratificado':
+        `La técnica de muestreo será el muestreo probabilístico estratificado, 
+dividiendo a ${personas} de ${org} en subgrupos homogéneos (estratos) según criterios relevantes 
+para la investigación (área, cargo, antigüedad, entre otros). 
+De cada estrato se extraerá una muestra proporcional, garantizando así la representatividad de todos los subgrupos.`,
+
+      'no probabilístico por conveniencia':
+        `La técnica de muestreo será no probabilística por conveniencia, 
+seleccionando a ${personas} de ${org} que cumplan la condición de ${condicion} 
+y que estén disponibles y accesibles durante el período de recolección de datos. 
+Si bien este tipo de muestreo no garantiza representatividad estadística, 
+resulta adecuado dado el alcance y las condiciones del estudio.`,
+
+      'no probabilístico censal':
+        `Dado el tamaño reducido de la población (N = ${poblacion}), se optará por un muestreo no probabilístico censal, 
+es decir, se incluirá en el estudio a la totalidad de ${personas} de ${org} 
+que cumplan con la condición de ${condicion}. 
+Este criterio permite obtener información completa y representativa sin necesidad de calcular una muestra.`
+    };
+
+    const met6 = muestreoTextos[tipoMuestreo] || muestreoTextos['probabilístico aleatorio simple'];
+
+    // ======================================================
+    //  RENDERIZAR
+    // ======================================================
+
+    // — Justificación —
+    const jItems = [
+      { num:'1', titulo:'Conveniencia',           texto: j1 },
+      { num:'2', titulo:'Relevancia social',       texto: j2 },
+      { num:'3', titulo:'Valor teórico',            texto: j3 },
+      { num:'4', titulo:'Implicaciones prácticas',  texto: j4 },
+      { num:'5', titulo:'Utilidad metodológica',    texto: j5 }
+    ];
+
+    document.getElementById('bloqueJustificacion').innerHTML =
+      makeBlock('Justificación de la investigación', 'Hernández-Sampieri (5 criterios)', 'badge-sampieri', jItems);
+
+    // — Metodología —
+    const mItems = [
+      { num:'1', titulo:'Enfoque de la investigación',             texto: met1 },
+      { num:'2', titulo:'Tipo / alcance de la investigación',      texto: met2 },
+      { num:'3', titulo:'Diseño de la investigación',              texto: met3 },
+      { num:'4', titulo:'Población y unidad de análisis',          texto: met4 },
+      { num:'5', titulo:'Muestra',                                  texto: met5 },
+      { num:'6', titulo:'Muestreo',                                 texto: met6 }
+    ];
+
+    document.getElementById('bloqueMetodologia').innerHTML =
+      makeBlock('Metodología', 'Enfoque · Tipo · Diseño · Población · Muestra · Muestreo', 'badge-met', mItems);
+
+    // Ir a justificación
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    document.querySelector('[data-tab="justificacion"]').classList.add('active');
+    document.getElementById('justificacion').classList.add('active');
+  }
+
+  // ——— FÓRMULA MUESTRA POBLACIONES FINITAS ———
+  function calcularMuestra(N){
+    if(!N || N <= 0) return 0;
+    const Z = 1.96, p = 0.5, q = 0.5, e = 0.05;
+    const n0 = (Z*Z*p*q) / (e*e);
+    const n  = Math.ceil(n0 / (1 + (n0-1)/N));
+    return n;
+  }
+
+  // Init
+  validar();
+</script>
+</body>
+</html>

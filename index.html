@@ -282,6 +282,7 @@
   <button class="tab-btn active" data-tab="input">Datos de entrada</button>
   <button class="tab-btn" data-tab="justificacion">Justificación</button>
   <button class="tab-btn" data-tab="metodologia">Metodología Admi</button>
+  <button class="tab-btn" data-tab="metodologiaEPG">Metodología EPG</button>
 </div>
 
 <!-- ============================= TAB: INPUT ============================= -->
@@ -385,6 +386,11 @@
 <!-- ============================= TAB: METODOLOGÍA ============================= -->
 <div id="metodologia" class="tab-content">
   <div id="bloqueMetodologia"></div>
+</div>
+
+<!-- ============================= TAB: METODOLOGÍA EPG ============================= -->
+<div id="metodologiaEPG" class="tab-content">
+  <div id="bloqueMetodologiaEPG"></div>
 </div>
 
 <footer>AntoMatic Tools v2.1 · UNASAM EPG &amp; E.P. Administración · Tomar con precaución · Basado en Hernández-Sampieri et al.</footer>
@@ -501,7 +507,56 @@
       html += `</div>`;
     });
 
-    html += `</div></div>`;
+    // Botón Copiar todo — Metodología Admi
+    html += `
+        <button class="btn-copy-todo" onclick="copiarTodoMet(this,'met_s')">Copiar todo</button>
+      </div></div>`;
+    return html;
+  }
+
+  function copiarTodoMet(btn, prefix){
+    const textos = [];
+    document.querySelectorAll(`[id^="${prefix}"]`).forEach(el => {
+      textos.push(el.innerText);
+    });
+    navigator.clipboard.writeText(textos.join('\n\n')).then(() => {
+      btn.textContent = 'Copiado';
+      btn.classList.add('done');
+      setTimeout(() => { btn.textContent = 'Copiar todo'; btn.classList.remove('done'); }, 1600);
+    });
+  }
+
+  // Builder para METODOLOGÍA EPG con botón Copiar todo
+  function makeBlockMetEPG(sections){
+    let html = `<div class="out-block">
+      <div class="out-head">
+        <span>Metodología EPG</span>
+        <span class="out-badge badge-met">3.1 – 3.5</span>
+      </div>
+      <div class="out-body">`;
+
+    sections.forEach((sec, si) => {
+      html += `
+        <div class="met-section">
+          <div class="met-section-head">
+            <span class="met-num">${sec.num}</span> ${sec.titulo}
+          </div>`;
+
+      sec.items.forEach((item, ii) => {
+        const eid = `epg_s${si}_i${ii}`;
+        html += `
+          <div class="criterio-block" style="margin-left:0">
+            ${item.sub ? `<div class="criterio-head"><span style="font-style:italic;font-weight:normal">${item.sub}</span><button class="btn-copy-block" onclick="copiarBtn(this, document.getElementById('${eid}').innerText)">Copiar</button></div>` : `<div class="criterio-head" style="justify-content:flex-end"><button class="btn-copy-block" onclick="copiarBtn(this, document.getElementById('${eid}').innerText)">Copiar</button></div>`}
+            <div class="criterio-body" id="${eid}">${item.texto.replace(/\n/g,'<br>')}</div>
+          </div>`;
+      });
+
+      html += `</div>`;
+    });
+
+    html += `
+        <button class="btn-copy-todo" onclick="copiarTodoMet(this,'epg_s')">Copiar todo</button>
+      </div></div>`;
     return html;
   }
 
@@ -714,6 +769,42 @@ Este criterio permite obtener información completa y representativa sin necesid
 
     document.getElementById('bloqueMetodologia').innerHTML =
       makeBlockMet(mSections);
+
+    // ======================================================
+    //  METODOLOGÍA EPG
+    // ======================================================
+    const epgSections = [
+      {
+        num: '3.1.', titulo: 'Tipo de investigación',
+        items: [
+          { sub:'Enfoque', texto: met1 },
+          { sub:'Tipo / alcance', texto: met2 }
+        ]
+      },
+      {
+        num: '3.2.', titulo: 'Diseño de investigación',
+        items: [{ sub:'', texto: met3 }]
+      },
+      {
+        num: '3.3.', titulo: 'Población y muestra',
+        items: [
+          { sub:'Población', texto: met4 },
+          { sub:'Muestra', texto: met5 },
+          { sub:'Muestreo', texto: met6 }
+        ]
+      },
+      {
+        num: '3.4.', titulo: 'Técnicas e instrumento(s) de recolección de datos',
+        items: [{ sub:'', texto: met35 }]
+      },
+      {
+        num: '3.5.', titulo: 'Plan de procesamiento y análisis de datos',
+        items: [{ sub:'', texto: `Los datos recolectados mediante el ${instrumento} serán codificados e ingresados en una base de datos para su procesamiento con el software estadístico correspondiente. Se aplicarán estadísticos descriptivos (frecuencias, medias, desviaciones estándar) para caracterizar las variables ${varX} y ${varY}, y estadísticos inferenciales para contrastar las hipótesis de investigación.\n\nLos resultados serán organizados en tablas y figuras que permitan una interpretación clara y fundamentada de los hallazgos. Las conclusiones se derivarán de la contrastación entre los resultados obtenidos y el marco teórico de referencia, contribuyendo a la generación de conocimiento aplicable en ${sector}.` }]
+      }
+    ];
+
+    document.getElementById('bloqueMetodologiaEPG').innerHTML =
+      makeBlockMetEPG(epgSections);
 
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));

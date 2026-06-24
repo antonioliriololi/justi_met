@@ -223,6 +223,43 @@
     border-top: 1px solid #ddd; margin-top: 24px;
     padding-top: 10px; font-size: 10px; color: #aaa; text-align: center;
   }
+
+  /* ===== METODOLOGÍA ADMI ===== */
+  .met-section {
+    margin-bottom: 14px;
+    border: 1px solid #ccc;
+  }
+
+  .met-section-head {
+    background: #333; color: #fff;
+    padding: 6px 10px;
+    font-size: 12px; font-weight: bold;
+    letter-spacing: .04em;
+  }
+
+  .met-num {
+    display: inline-block;
+    background: #fff; color: #000;
+    font-size: 11px; font-weight: bold;
+    padding: 1px 6px; margin-right: 6px;
+  }
+
+  /* ===== BOTÓN COPIAR TODO ===== */
+  .btn-copy-todo {
+    display: block;
+    width: 100%;
+    margin-top: 10px;
+    padding: 9px;
+    background: #000; color: #fff;
+    border: none; cursor: pointer;
+    font-family: Arial, sans-serif;
+    font-size: 12px; font-weight: bold;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    transition: background .15s;
+  }
+  .btn-copy-todo:hover { background: #333; }
+  .btn-copy-todo.done  { background: #2a7a2a; }
 </style>
 </head>
 <body>
@@ -234,7 +271,7 @@
     <h1>Proyecto 3 — Justificación y Metodología</h1>
     <p>Justificación (5 criterios) · Enfoque · Tipo · Diseño · Población · Muestra · Muestreo</p>
   </div>
-  <div class="header-badge">v2.0</div>
+  <div class="header-badge">v2.1</div>
 </header>
 
 <!-- VALIDATION BAR -->
@@ -244,25 +281,23 @@
 <div class="tabs">
   <button class="tab-btn active" data-tab="input">Datos de entrada</button>
   <button class="tab-btn" data-tab="justificacion">Justificación</button>
-  <button class="tab-btn" data-tab="metodologia">Metodología</button>
+  <button class="tab-btn" data-tab="metodologia">Metodología Admi</button>
 </div>
 
 <!-- ============================= TAB: INPUT ============================= -->
 <div id="input" class="tab-content active">
 
   <div class="input-section">
-    <h2>Variables y organización</h2>
+    <h2>Variables o Constructos y organización</h2>
     <div class="input-grid">
 
-      <div class="section-label">Variables</div>
+      <div class="section-label">Variables o Constructos</div>
 
-      <label>Variable independiente (X):</label>
-      <input type="text" id="varX" placeholder="la resiliencia" oninput="validar()">
-      <span></span><span class="hint">Ej: <i>la motivación intrínseca</i></span>
+      <label>Variable independiente o factores que inciden:</label>
+      <input type="text" id="varX" placeholder="la resiliencia, el liderazgo, la comunicación" oninput="validar()">
 
-      <label>Variable dependiente (Y):</label>
+      <label>Variable dependiente o resultado o efecto:</label>
       <input type="text" id="varY" placeholder="el compromiso organizacional" oninput="validar()">
-      <span></span><span class="hint">Ej: <i>el desempeño laboral</i></span>
 
       <hr class="input-divider"><hr class="input-divider">
       <div class="section-label">Contexto institucional</div>
@@ -287,12 +322,6 @@
 
       <label>Condición para ser encuestado:</label>
       <input type="text" id="condicion" placeholder="tener una relación contractual vigente con la organización" oninput="validar()">
-
-      <label>Edad mínima:</label>
-      <input type="number" id="edadMin" value="18" oninput="validar()">
-
-      <label>Edad máxima:</label>
-      <input type="number" id="edadMax" value="60" oninput="validar()">
 
       <label>Tamaño de la población (N):</label>
       <input type="number" id="poblacion" value="70" oninput="validar()">
@@ -358,7 +387,7 @@
   <div id="bloqueMetodologia"></div>
 </div>
 
-<footer>AntoMatic Tools v2.0 · UNASAM EPG &amp; E.P. Administración · Tomar con precaución · Basado en Hernández-Sampieri et al.</footer>
+<footer>AntoMatic Tools v2.1 · UNASAM EPG &amp; E.P. Administración · Tomar con precaución · Basado en Hernández-Sampieri et al.</footer>
 
 <script>
   // ——— TABS ———
@@ -396,32 +425,7 @@
   // ——— HELPERS ———
   function g(id){ return document.getElementById(id).value.trim(); }
 
-  function makeBlock(titulo, badge, badgeClass, items){
-    let html = `<div class="out-block">
-      <div class="out-head">
-        <span>${titulo}</span>
-        <span class="out-badge ${badgeClass}">${badge}</span>
-      </div>
-      <div class="out-body">`;
-
-    items.forEach((item, i) => {
-      html += `
-        <div class="criterio-block">
-          <div class="criterio-head">
-            <span><span class="criterio-num">${item.num}</span>${item.titulo}</span>
-            <button class="btn-copy-block" onclick="copiarCriterio(this,'criterio_${titulo.replace(/\s/g,'_')}_${i}')">Copiar</button>
-          </div>
-          <div class="criterio-body" id="criterio_${titulo.replace(/\s/g,'_')}_${i}">${item.texto}</div>
-        </div>`;
-    });
-
-    html += `</div></div>`;
-    return html;
-  }
-
-  function copiarCriterio(btn, id){
-    const el = document.getElementById(id);
-    const txt = el ? el.innerText : '';
+  function copiarBtn(btn, txt){
     navigator.clipboard.writeText(txt).then(() => {
       btn.textContent = '✓ Copiado';
       btn.classList.add('done');
@@ -429,9 +433,80 @@
     });
   }
 
+  // Builder para JUSTIFICACIÓN con botón "Copiar todo"
+  function makeBlockJust(items){
+    let html = `<div class="out-block">
+      <div class="out-head">
+        <span>Justificación de la investigación</span>
+        <span class="out-badge badge-sampieri">Hernández-Sampieri (5 criterios)</span>
+      </div>
+      <div class="out-body">`;
+
+    items.forEach((item, i) => {
+      const eid = `just_item_${i}`;
+      html += `
+        <div class="criterio-block">
+          <div class="criterio-head">
+            <span><span class="criterio-num">${item.num}</span>${item.titulo}</span>
+            <button class="btn-copy-block" onclick="copiarBtn(this, document.getElementById('${eid}').innerText)">Copiar</button>
+          </div>
+          <div class="criterio-body" id="${eid}">${item.texto.replace(/\n/g,'<br>')}</div>
+        </div>`;
+    });
+
+    // Botón Copiar todo
+    html += `
+        <button class="btn-copy-todo" id="btnCopiarTodo" onclick="copiarTodoJust(this)">Copiar todo</button>
+      </div></div>`;
+    return html;
+  }
+
+  function copiarTodoJust(btn){
+    const textos = [];
+    document.querySelectorAll('[id^="just_item_"]').forEach(el => {
+      textos.push(el.innerText);
+    });
+    navigator.clipboard.writeText(textos.join('\n\n')).then(() => {
+      btn.textContent = 'Copiado';
+      btn.classList.add('done');
+      setTimeout(() => { btn.textContent = 'Copiar todo'; btn.classList.remove('done'); }, 1600);
+    });
+  }
+
+  // Builder para METODOLOGÍA ADMI con secciones 3.1–3.5
+  function makeBlockMet(sections){
+    let html = `<div class="out-block">
+      <div class="out-head">
+        <span>Metodología Admi</span>
+        <span class="out-badge badge-met">3.1 – 3.5</span>
+      </div>
+      <div class="out-body">`;
+
+    sections.forEach((sec, si) => {
+      html += `
+        <div class="met-section">
+          <div class="met-section-head">
+            <span class="met-num">${sec.num}</span> ${sec.titulo}
+          </div>`;
+
+      sec.items.forEach((item, ii) => {
+        const eid = `met_s${si}_i${ii}`;
+        html += `
+          <div class="criterio-block" style="margin-left:0">
+            ${item.sub ? `<div class="criterio-head"><span style="font-style:italic;font-weight:normal">${item.sub}</span><button class="btn-copy-block" onclick="copiarBtn(this, document.getElementById('${eid}').innerText)">Copiar</button></div>` : `<div class="criterio-head" style="justify-content:flex-end"><button class="btn-copy-block" onclick="copiarBtn(this, document.getElementById('${eid}').innerText)">Copiar</button></div>`}
+            <div class="criterio-body" id="${eid}">${item.texto.replace(/\n/g,'<br>')}</div>
+          </div>`;
+      });
+
+      html += `</div>`;
+    });
+
+    html += `</div></div>`;
+    return html;
+  }
+
   // ——— PROCESO PRINCIPAL ———
   function procesarTodo(){
-    // Leer valores
     const varX         = g('varX')         || 'la variable independiente';
     const varY         = g('varY')         || 'la variable dependiente';
     const org          = g('organizacion') || 'la organización';
@@ -440,8 +515,6 @@
     const personas     = g('personas')     || 'los trabajadores';
     const trabSing     = g('trabajadorSing')|| 'el trabajador';
     const condicion    = g('condicion')    || 'tener relación contractual vigente';
-    const edadMin      = g('edadMin')      || '18';
-    const edadMax      = g('edadMax')      || '60';
     const poblacion    = g('poblacion')    || '0';
     const decisores    = g('decisores')    || 'las autoridades de la organización';
     const personaClave = g('personaClave') || 'el responsable del área';
@@ -499,13 +572,11 @@ ${j5_extra}`;
     //  METODOLOGÍA
     // ======================================================
 
-    // — Enfoque —
     const met1 = `La investigación adopta un enfoque cuantitativo, dado que se medirán las variables ${varX} y ${varY} 
 mediante instrumentos estructurados que producen datos numéricos, los cuales serán procesados 
 mediante técnicas estadísticas para contrastar las hipótesis planteadas (Hernández-Sampieri et al., 2014). 
 Este enfoque permite obtener resultados objetivos, replicables y generalizables al contexto de ${sector}.`;
 
-    // — Tipo —
     const tipoTextos = {
       'correlacional':
         `El tipo de investigación es correlacional, ya que tiene como propósito conocer la relación o grado de asociación 
@@ -535,20 +606,16 @@ en el contexto de ${sector}.`
 
     const met2 = tipoTextos[tipoInv] || tipoTextos['correlacional'];
 
-    // — Diseño —
     const met3 = `El diseño de la investigación es no experimental de corte transversal, dado que las variables 
 ${varX} y ${varY} serán observadas en su estado natural, sin manipulación deliberada de ninguna de ellas. 
 La recolección de datos se realizará en un único momento del tiempo, tomando como referencia a ${personas} 
 de ${org} en ${ciudad}, lo que corresponde a un diseño transeccional según Hernández-Sampieri et al. (2014).`;
 
-    // — Población y unidad de análisis —
     const met4 = `La población objeto de estudio estará conformada por ${personas} de ${org}, ubicados en ${ciudad}, 
 pertenecientes a ${sector}. La unidad de análisis, entendida como el elemento del que se obtendrá la información 
-primaria para la investigación, estará representada por ${trabSing} adscrito a ${org}, cuyo rango de edad 
-oscila entre los ${edadMin} y ${edadMax} años. Se estima una población de aproximadamente ${poblacion} sujetos 
-que cumplan con la condición de ${condicion}.`;
+primaria para la investigación, estará representada por ${trabSing} adscrito a ${org}. 
+Se estima una población de aproximadamente ${poblacion} sujetos que cumplan con la condición de ${condicion}.`;
 
-    // — Muestra —
     let met5 = '';
     if(esCensal){
       met5 = `Dado que la población es reducida (N = ${poblacion}), se aplicará un muestreo censal, es decir, 
@@ -570,7 +637,6 @@ un error máximo admisible del 5% y una varianza máxima (p = q = 0.5).${textoMu
 ${esPosgrado ? 'Para estudios con modelos de ecuaciones estructurales (PLS-SEM) se aplicará adicionalmente el criterio de 10 veces el número de flechas entrantes al constructo con más indicadores (regla de los 10).' : ''}`;
     }
 
-    // — Muestreo —
     const muestreoTextos = {
       'probabilístico aleatorio simple':
         `La técnica de muestreo será el muestreo probabilístico aleatorio simple, 
@@ -600,36 +666,55 @@ Este criterio permite obtener información completa y representativa sin necesid
 
     const met6 = muestreoTextos[tipoMuestreo] || muestreoTextos['probabilístico aleatorio simple'];
 
-    // ======================================================
-    //  RENDERIZAR
-    // ======================================================
+    // Texto de técnicas e instrumentos
+    const met35 = `Para la recolección de datos se empleará el ${instrumento} como instrumento principal, aplicado a ${personas} de ${org} que cumplan con la condición de ${condicion}. El instrumento será validado mediante juicio de expertos y sometido a pruebas de confiabilidad (Alfa de Cronbach) antes de su aplicación definitiva, garantizando así su validez de contenido y consistencia interna.\n\nInterpretación de datos\nDichos datos luego de ser analizados y procesados mediante el software correspondiente, serán presentados en un informe que contendrá tablas descriptivas y cruzadas que proporcionarán una visión más amplia y sencilla sobre los resultados de este trabajo de investigación.`;
 
-    // — Justificación —
+    // ======================================================
+    //  RENDERIZAR — JUSTIFICACIÓN (nuevo orden)
+    // ======================================================
     const jItems = [
-      { num:'1', titulo:'Conveniencia',           texto: j1 },
-      { num:'2', titulo:'Relevancia social',       texto: j2 },
-      { num:'3', titulo:'Valor teórico',            texto: j3 },
-      { num:'4', titulo:'Implicaciones prácticas',  texto: j4 },
-      { num:'5', titulo:'Utilidad metodológica',    texto: j5 }
+      { num:'1', titulo:'Justificación Teórica',      texto: j3 },
+      { num:'2', titulo:'Justificación Práctica',      texto: j4 },
+      { num:'3', titulo:'Justificación Metodológica',  texto: j5 },
+      { num:'4', titulo:'Justificación Social',        texto: j2 },
+      { num:'5', titulo:'Conveniencia',                texto: j1 }
     ];
 
     document.getElementById('bloqueJustificacion').innerHTML =
-      makeBlock('Justificación de la investigación', 'Hernández-Sampieri (5 criterios)', 'badge-sampieri', jItems);
+      makeBlockJust(jItems);
 
-    // — Metodología —
-    const mItems = [
-      { num:'1', titulo:'Enfoque de la investigación',             texto: met1 },
-      { num:'2', titulo:'Tipo / alcance de la investigación',      texto: met2 },
-      { num:'3', titulo:'Diseño de la investigación',              texto: met3 },
-      { num:'4', titulo:'Población y unidad de análisis',          texto: met4 },
-      { num:'5', titulo:'Muestra',                                  texto: met5 },
-      { num:'6', titulo:'Muestreo',                                 texto: met6 }
+    const mSections = [
+      {
+        num: '3.1.', titulo: 'Tipo de Estudio',
+        items: [
+          { sub:'Enfoque de la investigación', texto: met1 },
+          { sub:'Tipo / alcance de la investigación', texto: met2 }
+        ]
+      },
+      {
+        num: '3.2.', titulo: 'Diseño de Investigación',
+        items: [{ sub:'', texto: met3 }]
+      },
+      {
+        num: '3.3.', titulo: 'Población',
+        items: [{ sub:'', texto: met4 }]
+      },
+      {
+        num: '3.4.', titulo: 'Unidad de Análisis y Muestra',
+        items: [
+          { sub:'Muestra', texto: met5 },
+          { sub:'Muestreo', texto: met6 }
+        ]
+      },
+      {
+        num: '3.5.', titulo: 'Técnicas e Instrumentos de recopilación de datos',
+        items: [{ sub:'', texto: met35 }]
+      }
     ];
 
     document.getElementById('bloqueMetodologia').innerHTML =
-      makeBlock('Metodología', 'Enfoque · Tipo · Diseño · Población · Muestra · Muestreo', 'badge-met', mItems);
+      makeBlockMet(mSections);
 
-    // Ir a justificación
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
     document.querySelector('[data-tab="justificacion"]').classList.add('active');
@@ -645,7 +730,6 @@ Este criterio permite obtener información completa y representativa sin necesid
     return n;
   }
 
-  // Init
   validar();
 </script>
 </body>
